@@ -12,19 +12,19 @@ let ty_prim op ty1 ty2 = match op with
     Plus -> (match ty1, ty2 with
                TyInt, TyInt -> TyInt
              | _ -> err ("Argument must be integer: +"))
-    Mult -> (match ty1, ty2 with
+  | Mult -> (match ty1, ty2 with
                TyInt, TyInt -> TyInt
              | _ -> err ("Argument must be integer: *"))
-    Lt -> (match ty1, ty2 with
+  | Lt -> (match ty1, ty2 with
                TyInt, TyInt -> TyBool
              | _ -> err ("Argument must be integer: <"))
-    Mt -> (match ty1, ty2 with
+  | Mt -> (match ty1, ty2 with
                TyInt, TyInt -> TyBool
              | _ -> err ("Argument must be integer: >"))
-    And -> (match ty1, ty2 with
+  | And -> (match ty1, ty2 with
                TyBool, TyBool -> TyBool
              | _ -> err ("Argument must be boolean: &&"))
-    Mult -> (match ty1, ty2 with
+  | Or -> (match ty1, ty2 with
                TyBool, TyBool -> TyBool
              | _ -> err ("Argument must be boolean: ||"))
       
@@ -51,9 +51,10 @@ let rec ty_exp tyenv = function
      then err ("Arguments must be same type: 2nd and 3rd arguments of if")
      else tyexp2
   | LetExp (id, exp1, exp2) ->
-     
+     let tyvalue = ty_exp tyenv exp1 in
+     ty_exp (Environment.extend id tyvalue tyenv) exp2
   | _ -> err ("Not Implemented!")
 
 let ty_decl tyenv = function
     Exp e -> ty_exp tyenv e
-  | _ -> err ("Not Implemented!")
+  | _ -> err ("Not Implemented")
