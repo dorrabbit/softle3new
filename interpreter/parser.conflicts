@@ -1,0 +1,58 @@
+
+** Conflict (reduce/reduce) in state 42.
+** Tokens involved: THEN SEMISEMI RPAREN IN ELSE
+** The following explanations concentrate on token SEMISEMI.
+** This state is reached from toplevel after reading:
+
+AppExpr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+toplevel 
+Expr SEMISEMI // lookahead token appears
+(?)
+
+** In state 42, looking ahead at SEMISEMI, reducing production
+** FunExpr -> AppExpr 
+** is permitted because of the following sub-derivation:
+
+FunExpr // lookahead token is inherited
+AppExpr . 
+
+** In state 42, looking ahead at SEMISEMI, reducing production
+** MExpr -> AppExpr 
+** is permitted because of the following sub-derivation:
+
+LTExpr // lookahead token is inherited
+PExpr // lookahead token is inherited
+MExpr // lookahead token is inherited
+AppExpr . 
+
+** Conflict (reduce/reduce) in state 38.
+** Tokens involved: THEN SEMISEMI RPAREN IN ELSE
+** The following explanations concentrate on token SEMISEMI.
+** This state is reached from toplevel after reading:
+
+LTExpr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+toplevel 
+Expr SEMISEMI // lookahead token appears
+(?)
+
+** In state 38, looking ahead at SEMISEMI, reducing production
+** AndExpr -> LTExpr 
+** is permitted because of the following sub-derivation:
+
+OrExpr // lookahead token is inherited
+AndExpr // lookahead token is inherited
+LTExpr . 
+
+** In state 38, looking ahead at SEMISEMI, reducing production
+** Expr -> LTExpr 
+** is permitted because of the following sub-derivation:
+
+LTExpr . 
