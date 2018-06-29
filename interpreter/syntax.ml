@@ -4,7 +4,11 @@ type id = string
 
 type binOp = Plus | Mult | Lt | Mt | And | Or
 
-type ty = TyInt | TyBool
+type tyvar = int
+  
+type ty =   TyInt | TyBool
+          | TyVar of tyvar
+	  | TyFun of ty * ty
     
 type exp =
   | Var of id (* Var "x" --> x *)
@@ -30,3 +34,17 @@ type program =
 let pp_ty = function
     TyInt -> print_string "int"
   | TyBool -> print_string "bool"
+
+let fresh_tyvar =
+  let counter = ref 0 in
+  let body () =
+    let v = !counter in
+    counter := v + 1; v
+  in body
+
+let rec freevar_ty ty =
+  match ty with
+    TyInt -> MySet.empty
+  | TyBool -> MySet.empty
+  | TyVar tyvar -> MySet.singleton tyvar
+  | TyFun (tya, tyb) -> MySet.union (freevar_ty tya) (freevar_ty tyb)

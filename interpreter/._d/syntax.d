@@ -1,2 +1,2 @@
-syntax.cmo :
-syntax.cmx :
+syntax.cmo : mySet.cmi
+syntax.cmx : mySet.cmx
