@@ -15,7 +15,7 @@ let rec read_eval_print env =
     Error message -> (print_string message;
 		      print_newline();
 		      read_eval_print env)
-  | Failure message -> (print_string message;
+  | Parser.Error -> (print_string "parser error";
 		        print_newline();
 		        read_eval_print env)
   | _ -> (print_string "error: other error";

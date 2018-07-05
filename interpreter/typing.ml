@@ -89,7 +89,7 @@ let rec ty_exp tyenv = function
      let domty = TyVar (fresh_tyvar ()) in
      let (s, ranty) = ty_exp (Environment.extend id domty tyenv) exp in
      (s, TyFun (subst_type s domty, ranty))
-  | AppExp (exp1, exp2) -> 
+  | AppExp (exp1, exp2) -> (* せんせーに聞こうぜ！構文木を見るのと。 *)
   | _ -> err ("Not Implemented!")
 
 let ty_decl tyenv = function
