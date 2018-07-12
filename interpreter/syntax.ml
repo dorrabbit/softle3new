@@ -31,9 +31,15 @@ type program =
   | Decl of id * exp
   | RecDecl of id * id * exp
 
-let pp_ty = function
+let rec pp_ty = function
     TyInt -> print_string "int"
   | TyBool -> print_string "bool"
+  | TyFun (ty1, ty2) -> (pp_ty ty1;
+                         print_string " -> ";
+			 pp_ty ty2)
+  | TyVar var -> (print_string "'";
+		  let varchar = char_of_int (97 + var) in
+		  print_char varchar)
 
 let fresh_tyvar =
   let counter = ref 0 in
