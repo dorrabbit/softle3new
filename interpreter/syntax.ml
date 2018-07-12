@@ -30,16 +30,21 @@ type program =
     Exp of exp
   | Decl of id * exp
   | RecDecl of id * id * exp
-
+  
 let rec pp_ty = function
     TyInt -> print_string "int"
   | TyBool -> print_string "bool"
-  | TyFun (ty1, ty2) -> (pp_ty ty1;
-                         print_string " -> ";
-			 pp_ty ty2)
-  | TyVar var -> (print_string "'";
-		  let varchar = char_of_int (97 + var) in
-		  print_char varchar)
+  | TyFun (ty1, ty2) -> (match ty1 with
+      TyFun (tyunder1, tyunder2) -> (print_string "(";
+				     pp_ty ty1;
+				     print_string ")";
+				     print_string " -> ";
+				     pp_ty ty2)
+    | _ -> pp_ty ty1;
+           print_string " -> ";
+	   pp_ty ty2)
+  | TyVar var -> (print_string "'a";
+		  print_int var)
 
 let fresh_tyvar =
   let counter = ref 0 in
@@ -47,7 +52,7 @@ let fresh_tyvar =
     let v = !counter in
     counter := v + 1; v
   in body
-
+  
 let rec freevar_ty ty =
   match ty with
     TyInt -> MySet.empty

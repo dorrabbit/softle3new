@@ -89,15 +89,15 @@ let rec ty_exp tyenv = function
      let domty = TyVar (fresh_tyvar ()) in
      let (s, ranty) = ty_exp (Environment.extend id domty tyenv) exp in
      (s, TyFun (subst_type s domty, ranty))
-  | AppExp (exp1, exp2) -> (
+  | AppExp (exp1, exp2) ->
      let (s1, ty1) = ty_exp tyenv exp1 in
      let (s2, ty2) = ty_exp tyenv exp2 in
-     match ty1 with TyFun (tyf1, tyf2) -> 
-       let resultsubst =
-         unify ((ty1, TyFun (tyf1, tyf2)) :: (ty2, tyf1) :: (eqs_of_subst s1) @ (eqs_of_subst s2)) in
-       (* ty1は最終TyFunになる条件をつけてunify　↑ *)
-       (resultsubst, subst_type resultsubst tyf2)
-     | _ -> err ("Not function"))
+     let tyf2 = TyVar (fresh_tyvar ()) in
+     (*let tyf2 = TyVar (fresh_tyvar ()) in*)
+     let resultsubst =
+       unify ((ty1, TyFun (ty2, tyf2)) :: (eqs_of_subst s1) @ (eqs_of_subst s2)) in
+     (* ty1は最終TyFunになる条件をつけてunify　↑ *)
+     (resultsubst, subst_type resultsubst tyf2)
   | _ -> err ("Not Implemented!")
 
 let ty_decl tyenv = function
