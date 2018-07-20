@@ -19,23 +19,6 @@ let rec subst_type sb ty =
     | (alpha, reaty) :: tl -> if var=alpha then subst_type tl reaty
                                            else subst_type tl ty)
   | TyFun (ty1, ty2) -> TyFun (subst_type sb ty1, subst_type sb ty2)
-  (*
-  match sb with
-    [] -> ty
-  | x :: tl -> (match ty with
-      TyInt -> ty
-    | TyBool -> ty
-    | TyVar var -> if (fst x)=var then subst_type tl (snd x)
-                                  else subst_type tl ty
-    | TyFun (tya, tyb) ->
-       (if TyVar (fst x)=tya then
-           (if TyVar (fst x)=tyb
-	    then subst_type tl (TyFun ((snd x), (snd x)))
-	    else subst_type tl (TyFun ((snd x), tyb)))
-        else if TyVar (fst x)=tyb
-	     then subst_type tl (TyFun (tya, (snd x)))
-	else subst_type tl ty))
-     *)
      
 let eqs_of_subst s = List.map (fun sx -> (TyVar (fst sx), snd sx)) s
 
