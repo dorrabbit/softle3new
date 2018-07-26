@@ -16,8 +16,10 @@ let capitalize moji =
   else moji
 ;;
 
-(* Exercise 3.7 *)
+(* Exercise 3.3 *)
+let geo_mean (a, b) = sqrt (a *. b);;
 
+(* Exercise 3.7 *)
 let rec pow1 (x, n) =
   if n=0 then 1.0
   else x *. pow1 (x, n-1)
@@ -28,7 +30,13 @@ let rec pow2 (x, n) =
   else let powdata = pow2 (x, n/2) in x *. powdata *. powdata
 ;;
 
-(*Excercise 3.11 *)
+(* Exercise 3.8 *)
+let rec powi (x, n, res) =
+  if n=0 then res
+  else powi (x, n-1, x*.res)
+;;
+
+(* Exercise 3.11 *)
 let rec gcd (m, n) =
   if m<=n then if m=0 then n
                else gcd (m, n mod m)
@@ -51,6 +59,12 @@ let max_ascii sent =
     else if int_of_char sent.[num] > max then max_ascii_pre(num+1, int_of_char sent.[num], sent)
     else max_ascii_pre(num+1, max, sent) in
   char_of_int (max_ascii_pre (0, 0, sent))
+;;
+
+(* Exercise 3.12 *)
+let rec arctan_one n =
+  if n<0 then 0.
+  else arctan_one (n-1) +. 1. /. (float_of_int (4 * n + 1)) -. 1. /. (float_of_int (4 * n + 3))
 ;;
     
 (* Exercise 4.1 *)
@@ -85,7 +99,7 @@ let s x y z = x z (y z)
 let second x y = k (s k k) x y
 ;;
 
-(* Exercise 5.3 *)
+(* prepare *)
 let hd (x::rest) = x;;
 let tl (x::rest) = rest;;
 let null = function [] -> true | _ -> false;;
@@ -96,6 +110,20 @@ let rec take n l =
 let rec drop n l =
   if n = 0 then l else drop (n - 1) (tl l);;
 
+(* Exercise 5.2 *)
+let rec sum_list l =
+  if null l then 0
+  else hd l + sum_list (tl l)
+;;
+let rec max_list l =
+  if null (tl l) then hd l
+  else if hd l>hd (tl l) then max_list (hd l :: tl (tl l))
+                         else max_list (hd (tl l) :: tl (tl l))
+;;
+(* matchを使用することで関数のパターンの場合分けと変数の定義が同時に行えるため、
+   書きやすく読みやすい。 *)
+
+(* Exercise 5.3 *)
 let rec downto0 n =
   if n<0 then []
   else n :: (downto0 (n-1))
@@ -127,6 +155,30 @@ let rec filter f l =
   | x :: t -> if (f x) then x :: (filter f t)
               else filter f t
 ;;
+let rec belong a s =
+  match s with
+    [] -> false
+  | x :: t -> if x=a then true
+                     else belong a t
+;;
+let rec intersect s1 s2 =
+  match s1 with
+    [] -> []
+  | x :: t -> if belong x s2 then x :: intersect t s2
+                             else intersect t s2
+;;
+let rec union s1 s2 =
+  match s1 with
+    [] -> s2
+  | x :: t -> if belong x s2 then union t s2
+                             else x :: union t s2
+;;
+let rec diff s1 s2 =
+  match s1 with
+    [] -> []
+  | x :: t -> if belong x s2 then diff t s2
+                             else x :: diff t s2
+;;
 
 (* Exercise 5.6 *)
 let rec quicker l sorted = match l with
@@ -137,6 +189,28 @@ let rec quicker l sorted = match l with
       | y :: ys -> if x<y then partition left (y :: right) ys
                    else partition (y :: left) right ys
       in partition [] [] xs
+;;
+
+(* Exercise 5.7 *)
+let squares r =
+let squares_judge x y r =
+  pow2 (float_of_int x, 2) +. pow2 (float_of_int y, 2) = float_of_int r in
+let rec squares_pre y r =
+  let x = int_of_float (sqrt (float_of_int r -. pow2 (float_of_int y, 2))) in
+  if y<0 then []
+  else if squares_judge x y r then (x, y) :: squares_pre (y-1) r
+                              else squares_pre (y-1) r in
+  let starty = int_of_float (sqrt (float_of_int r /. 2.)) in
+  squares_pre starty r
+;;
+
+(* Exercise 5.8 *)
+let map2 f l =
+  let rec map_pre f l res =
+    match l with
+      [] -> res
+    | x :: t -> f x :: map_pre f t res in
+  map_pre f l []
 ;;
 
 (* Exercise 6.2 *)
@@ -159,6 +233,15 @@ let rec monus m n =
   | OneMoreThan n' -> match m with
                         Zero -> Zero
                       | OneMoreThan m' -> monus m' n'
+;;
+
+(* Exercise 6.3 *)
+let rec minus m n =
+  match n with
+    Zero -> Some m
+  | OneMoreThan n' -> match m with
+                        Zero -> None
+                      | OneMoreThan m' -> minus m' n'
 ;;
 
 (* Exercise 6.6 *)
@@ -198,7 +281,6 @@ let f1 (a, s) =
     Left b -> Left (a, b)
   | Right c -> Right (a, c)
 ;;
-
 let f2 (ab, cd) =
   match cd with
     Left c -> (match ab with
@@ -208,7 +290,6 @@ let f2 (ab, cd) =
                   Left a -> Right (Left (a, d))
                 | Right b -> Left (Right (b, d)))
 ;;
-
 let f3 (f, g) = function
                   Left a -> f a
                 | Right b -> g b
